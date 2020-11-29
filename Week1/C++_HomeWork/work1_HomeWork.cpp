@@ -7,7 +7,7 @@
 
 using namespace std;
 
-//283. move zeros  移动0
+//283. move zeros --easy 移动0
 class solution {
     void mocveZeroes(vector<int>& nums) {
         if(nums.empty())
@@ -189,7 +189,106 @@ public:
 };
 
 
+/***********************       队列                     ****************************/
+//641. design circular daque - medium (设计循环双端队列)
+class MyCircularDeque {
+private:
+    vector<int> arr;
+    int front;
+    int rear;
+    int capacity;
+public:
+    MyCircularDeque(int k) {
+        capacity = k + 1;
+        arr.assign(capacity, 0);
+        front = 0;
+        rear = 0;
+    }
+    bool insertFront(int value) {
+        if (isFull()) {
+            return false;
+        }
+        front = (front - 1 + capacity) % capacity;
+        arr[front] = value;
+        return true;
+    }
+    bool insertLast(int value) {
+        if (isFull()) {
+            return false;
+        }
+        arr[rear] = value;
+        rear = (rear + 1) % capacity;
+        return true;
+    }
+    bool deleteFront() {
+        if (isEmpty()) {
+            return false;
+        }
+        // front 被设计在数组的开头，所以是 +1
+        front = (front + 1) % capacity;
+        return true;
+    }
+    //删除最后一个元素
+    bool deleteLast() {
+        if (isEmpty()) {
+            return false;
+        }
+        // rear 被设计在数组的末尾，所以是 -1
+        rear = (rear - 1 + capacity) % capacity;
+        return true;
+    }
+    //从双端队列中获取前项
+    int getFront() {
+        if (isEmpty()) {
+            return -1;
+        }
+        return arr[front];
+    }
+    //从双端队列中获取最后一个元素
+    int getRear() {
+        if (isEmpty()) {
+            return -1;
+        }
+        // 当 rear 为 0 时防止数组越界
+        return arr[(rear - 1 + capacity) % capacity];
+    }
+    //检查圆形双端队列是否为空。
+    bool isEmpty() {
+        return front == rear;
+    }
+    //检查圆形双端队列是否已满。
+    bool isFull() {
+        // 注意：这个设计是非常经典的做法
+        return (rear + 1) % capacity == front;
+    }
+};
 
+
+#include<stack>
+
+//42. trappping rain water -Hard(接雨水)
+// 利用栈
+class Solution {
+public:
+    int trap(vector<int>& height) {
+        int ans = 0, current = 0;
+        stack<int>st;
+        // 这里就是相当于维护一个单调减的栈，然后由此确定两个边界，进行中间的求解，就可以了
+        while (current < height.size()) {
+            while (!st.empty() && height[current] > height[st.top()]) {
+                int top = st.top();
+                st.pop();
+                if (st.empty())
+                    break;
+                int distance = current - st.top() - 1;
+                int bounded_height = min(height[current], height[st.top()]) - height[top];
+                ans += distance * bounded_height;
+            }
+            st.push(current++);
+        }
+        return ans;
+    }
+};
 
 
 

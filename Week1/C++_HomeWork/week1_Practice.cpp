@@ -403,7 +403,112 @@ public:
 };
 
 
+//155. min stack -easy (最小栈)
+class MinStack {
+public:
+    /** initialize your data structure here. */
+    stack<int>stk; 
+    stack<int>s_min; 
+    MinStack() {  }
+    
+    void push(int x) {
+        stk.push(x);
+        if(s_min.empty())
+            s_min.push(x);
+        else {
+            s_min.push(min(s_min.top(), x));
+        }
+        
+    }
+    void pop() {
+        stk.pop(); 
+        s_min.pop(); 
+    }
+    
+    int top() {
+       return stk.top(); 
+    }
+    
+    int getMin() {
+        int min_s = s_min.top(); 
+        return min_s; 
+    }
+};
 
 
 
+//84. largest rectangle in histogram -hard (柱状图中最大的矩形)
+
+// 超出时间限制，时间复杂度为O(n^2)
+class Solution {
+public:
+    int largestRectangleArea(vector<int>& heights) {
+        int n = heights.size();
+        int ans = 0;
+        // 枚举左边界
+        for (int left = 0; left < n; ++left) {
+            int minHeight = INT_MAX;
+            // 枚举右边界
+            for (int right = left; right < n; ++right) {
+                // 确定高度
+                minHeight = min(minHeight, heights[right]);
+                // 计算面积
+                ans = max(ans, (right - left + 1) * minHeight);
+            }
+        }
+        return ans;
+    }
+};
+
+// 使用栈（单调栈）
+class Solution {
+public:
+    int largestRectangleArea(vector<int>& heights) {
+        stack<int> st;
+        if(heights.size() == 0)
+            return 0;
+        int maxArea = heights[0];
+        heights.push_back(0);   //设置末尾边界
+        for(int i = 0; i < heights.size(); i++){
+            while(!st.empty() && heights[i] < heights[st.top()]){
+                int top_index = st.top();
+                //右边第一个比heights[st.top()]小的元素
+                int right = i;
+                st.pop();
+                //左边第一个比heights[st.top()]小的元素
+                int left = st.empty() ? -1 : st.top();	//注意无左边界的情况
+                maxArea = max(maxArea, heights[top_index] * (right - left - 1));
+            }
+            st.push(i);
+        }
+        return maxArea;
+    }
+};
+
+
+//239. sliding window maximum - hard (滑动窗口的最大值)
+// 使用队列(双端队列)
+vector<int> maxSlidingWindow(vector<int>& nums, int k) {
+        vector<int> res;
+        if(k == 0)
+             return res;
+        deque<int> window;   //双端队列，从队头到队尾 依次存 窗口内最大元素的index ~ 最小元素的index
+        int right = 0;
+        while(right < nums.size()){   
+            //后续，窗口每右移一次，都会产生一个最大值[队列头位置的元素]
+            if(!window.empty() && window.front() <= right - k){   
+                //队头不在窗口范围内
+                window.pop_front();
+            }
+            while(!window.empty() && nums[right] > nums[window.back()]){   
+                //待入队元素比队尾元素大
+                window.pop_back();
+            }
+            window.push_back(right);
+            right++;
+            if(right >= k) 
+                res.push_back(nums[window.front()]);
+        }
+        return res;
+    }
 
