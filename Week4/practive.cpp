@@ -156,3 +156,168 @@ public:
     }
 };
 
+
+
+
+
+
+//22. Generate paraentheses (括号生成) -Medium
+// 使用深度优先搜索
+
+class Solution {
+public:
+//2.Times 
+    // 使用回溯法进行括号的生成
+
+    void backTrack(vector<string>&ans, string path, int n, int left_c, int right_c) {
+        if(left_c >n || right_c > n || right_c > left_c)  // 这里的右括号数量大量左括号就是判断哪些不合理的组合
+            return ; 
+        if(left_c == n && right_c == n) {
+            ans.emplace_back(path); 
+            return ; 
+        }
+        // 
+        backTrack(ans, path + '(', n, left_c +1, right_c); 
+        backTrack(ans, path + ')', n, left_c, right_c +1);
+    }
+    vector<string> generateParenthesis(int n) {
+        vector<string>ans; 
+        int i = 0; 
+        int j = 0; 
+        backTrack(ans, "", n, i, j); 
+        return ans; 
+    }
+};
+
+
+// 515.在每个树行中找最大值
+
+// Dfs
+class Solution {
+public:
+// 1.Times
+    // 使用DFS，但是这题，最简单就是利用BFS进行解答，因为，BFS就是想党羽是层序遍历，更简单比较
+    // 使用DFS就是得制定一个levels进行层数相对应的判断
+    void dfs(TreeNode* root, int levels, vector<int>& ans) {
+        if(!root)
+            return ; 
+        if(ans.size() == levels)
+            ans.emplace_back(INT_MIN); 
+        // 比较值，判断取值
+        ans[levels] = max(ans[levels], root ->val);
+        if(root -> left)
+            dfs(root ->left, levels +1, ans);
+        if(root -> right)
+            dfs(root ->right, levels +1, ans); 
+    }
+    vector<int> largestValues(TreeNode* root) {
+        vector<int>ans; 
+        if(!root)
+            return ans; 
+        dfs(root, 0, ans); 
+        return ans; 
+    }
+};
+
+
+// BFS 
+//1Times 
+    // 使用BFS
+class Solution {
+    vector<int> largestValues(TreeNode* root) {
+        vector<int>ans; 
+        if(! root)
+            return ans; 
+        queue<TreeNode*>que; 
+        que.push(root); 
+        while(! que.empty()) {
+            int curLevelsSize = que.size(); 
+            int curLevelsMax = INT_MIN; 
+            for(int i = 0; i< curLevelsSize; ++ i) {
+                TreeNode* cur = que.front(); 
+                que.pop(); 
+                curLevelsMax= max(curLevelsMax, cur ->val); 
+                if(cur -> left)
+                    que.push(cur -> left); 
+                if(cur -> right)
+                    que.push(cur -> right); 
+            }
+            ans.emplace_back(curLevelsMax); 
+        }
+        return ans; 
+    }
+};
+
+
+
+/****************************     二分查找              *************************/
+
+
+// **********************************
+//69. sqrt(x)    x的平方根计算 
+class Solution {
+public:
+// 1.Times
+    // 直接利用二分查找
+    int mySqrt(int x) {
+        int left = 0, right = x, ans = -1; 
+        while(left <= right) {
+            int mid = left + (right - left)/2; 
+            if((long long)mid * mid <= x) {  // 乘积可能会溢出
+                ans = mid; 
+                left = mid +1; 
+            }
+            else 
+                right = mid -1; 
+        }
+        return ans; 
+    }
+};
+
+
+//**************************
+/// 367. 有效的完全平方数
+// 二分查找的方式：
+class Solution {
+public:
+// 1.timestimes
+    // 使用使用二分查找的方式
+    bool isPerfectSquare(int num) {
+        int left = 0; 
+        int right = num; 
+        //int ans = INT_MIN; 
+        while( left <= right) {
+            int mid = left + (right - left)/2; 
+            if((long long)mid * mid == num)
+                return true; 
+            else if( (long long)mid * mid > num) {
+                right = mid -1; 
+            }
+            else 
+                left = mid +1; 
+        }
+        return false; 
+    }
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
